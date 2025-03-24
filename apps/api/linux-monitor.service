@@ -1,0 +1,18 @@
+[Unit]
+Description=Linux Monitor Service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=YOUR_USERNAME
+WorkingDirectory=/opt/linux-monitor/apps/api
+Environment=NODE_ENV=production
+Environment=API_USER=admin
+Environment=API_PASSWORD=your_secure_password
+ExecStart=/usr/bin/pnpm start:no-watch
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target 

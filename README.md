@@ -21,7 +21,7 @@ A real-time monitoring solution for Linux servers that provides system resource 
 
 - Node.js >= 18
 - pnpm >= 9.0.0
-- Docker (optional, for containerized deployment)
+- Docker (optional, for development)
 - Linux system with the following commands available:
   - `df`
   - `free`
@@ -59,6 +59,8 @@ This will start both the API server and the frontend development server.
 
 ## Production Deployment
 
+### Option 1: Manual Deployment
+
 1. Set up environment variables:
 ```bash
 cp apps/api/.env.example apps/api/.env
@@ -76,6 +78,90 @@ pnpm start:no-watch
 cd apps/ui
 pnpm build
 pnpm start
+```
+
+### Option 2: Persistent Deployment with systemd
+
+1. Install the application in a permanent location:
+```bash
+# Create application directory
+sudo mkdir -p /opt/linux-monitor
+
+# Copy application files
+sudo cp -r . /opt/linux-monitor/
+
+# Set proper permissions
+sudo chown -R YOUR_USERNAME:YOUR_USERNAME /opt/linux-monitor
+```
+
+2. Install Node.js and pnpm globally:
+```bash
+# Install Node.js (if not already installed)
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Install pnpm globally
+curl -fsSL https://get.pnpm.io/install.sh | sh -
+```
+
+3. Install application dependencies:
+```bash
+cd /opt/linux-monitor
+pnpm install
+pnpm build
+```
+
+4. Set up the systemd service:
+```bash
+# Copy the service file
+sudo cp apps/api/linux-monitor.service /etc/systemd/system/
+
+# Edit the service file with your configuration
+sudo nano /etc/systemd/system/linux-monitor.service
+
+# Reload systemd to recognize the new service
+sudo systemctl daemon-reload
+
+# Enable the service to start on boot
+sudo systemctl enable linux-monitor
+
+# Start the service
+sudo systemctl start linux-monitor
+```
+
+5. Check the service status:
+```bash
+sudo systemctl status linux-monitor
+```
+
+6. View the logs:
+```bash
+sudo journalctl -u linux-monitor -f
+```
+
+### Useful systemd Commands
+
+```bash
+# Start the service
+sudo systemctl start linux-monitor
+
+# Stop the service
+sudo systemctl stop linux-monitor
+
+# Restart the service
+sudo systemctl restart linux-monitor
+
+# Check service status
+sudo systemctl status linux-monitor
+
+# View service logs
+sudo journalctl -u linux-monitor -f
+
+# Disable service from starting on boot
+sudo systemctl disable linux-monitor
+
+# Enable service to start on boot
+sudo systemctl enable linux-monitor
 ```
 
 ## Docker Deployment

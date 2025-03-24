@@ -3,6 +3,7 @@ import useSocket from "@/hooks/useSocket";
 
 export const ServerInfo = () => {
   const { data } = useSocket("http://localhost:6011");
+  console.log("data", data);
   const { os, hostname, machine } = data?.message || {
     hostname: "NetUnknown",
     os: { type: "unknown", release: "unknown" },

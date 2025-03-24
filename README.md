@@ -1,84 +1,143 @@
-# Turborepo starter
+# Linux Server Monitor
 
-This Turborepo starter is maintained by the Turborepo core team.
+A real-time monitoring solution for Linux servers that provides system resource information through a web interface. This application consists of a Node.js API backend and a React frontend, designed to monitor various system metrics including CPU, memory, disk usage, RAID health, and system temperature.
 
-## Using this example
+## Features
 
-Run the following command:
+- Real-time system monitoring
+- WebSocket-based live updates
+- System metrics including:
+  - CPU usage and information
+  - Memory usage and statistics
+  - Disk usage and storage information
+  - RAID health status
+  - System temperature
+  - Process information
+  - System uptime and load averages
+- Local network-only access for security
+- Docker support for easy deployment
 
-```sh
-npx create-turbo@latest
+## Prerequisites
+
+- Node.js >= 18
+- pnpm >= 9.0.0
+- Docker (optional, for containerized deployment)
+- Linux system with the following commands available:
+  - `df`
+  - `free`
+  - `top`
+  - `sensors`
+  - `mdadm` (for RAID monitoring)
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/linux-monitor.git
+cd linux-monitor
 ```
 
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
+2. Install dependencies:
+```bash
+pnpm install
 ```
-cd my-turborepo
+
+3. Build the application:
+```bash
 pnpm build
 ```
 
-### Develop
+## Development
 
-To develop all apps and packages, run the following command:
+To run the application in development mode:
 
-```
-cd my-turborepo
+```bash
 pnpm dev
 ```
 
-### Remote Caching
+This will start both the API server and the frontend development server.
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+## Production Deployment
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
+1. Set up environment variables:
+```bash
+cp apps/api/.env.example apps/api/.env
+# Edit .env with your secure credentials
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
+2. Start the API server:
+```bash
+cd apps/api
+pnpm start:no-watch
 ```
 
-## Useful Links
+3. Build and serve the frontend:
+```bash
+cd apps/ui
+pnpm build
+pnpm start
+```
 
-Learn more about the power of Turborepo:
+## Docker Deployment
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+The application can be deployed using Docker:
+
+```bash
+# Build the Docker image
+pnpm docker:build
+
+# Run the container
+pnpm docker:run
+```
+
+For manual Docker deployment:
+```bash
+pnpm docker:run:manual
+```
+
+## API Endpoints
+
+- `GET /` - Welcome page
+- `GET /disk-usage` - Get disk usage information
+- WebSocket endpoint on port 6011 for real-time updates
+
+## Security Considerations
+
+- The application is designed to run on local networks only
+- Basic authentication is required for API access
+- Rate limiting is implemented to prevent abuse
+- Environment variables should be properly configured in production
+
+## Project Structure
+
+```
+linux-monitor/
+├── apps/
+│   ├── api/         # Node.js backend API
+│   ├── ui/          # React frontend
+│   └── docs/        # Documentation
+├── packages/        # Shared packages
+└── turbo.json      # Turborepo configuration
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the ISC License - see the LICENSE file for details.
+
+## Author
+
+Michael Dupree - mikerdupree@gmail.com
+
+## Acknowledgments
+
+- [node-os-utils](https://github.com/SunilWang/node-os-utils) for system information utilities
+- [Express.js](https://expressjs.com/) for the API framework
+- [Socket.IO](https://socket.io/) for real-time communication
